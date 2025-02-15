@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import sequelize from "./config/database.js";
 
 const app = express();
 app.use(cors());
@@ -13,4 +14,10 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 // Starting server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Database synced");
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => console.log("Error:", err));
