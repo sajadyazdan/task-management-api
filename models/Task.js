@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import User from "./User.js";
 
 const Task = sequelize.define(
   "Task",
@@ -25,5 +26,8 @@ const Task = sequelize.define(
     timestamps: true,
   }
 );
+
+User.hasMany(Task);
+Task.belongsTo(User);
 
 export default Task;

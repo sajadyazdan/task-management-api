@@ -4,7 +4,7 @@ import Task from "../models/Task.js";
 const router = express.Router();
 
 // Create Task
-router.post("/tasks", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const task = await Task.create(req.body);
     res.status(201).json(task);
@@ -14,9 +14,13 @@ router.post("/tasks", async (req, res) => {
 });
 
 // Get All Tasks
-router.get("/tasks", async (_req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.findAll();
+    const { userId } = req.query;
+    console.log(userId);
+    const tasks = userId
+      ? await Task.findAll({ where: { userId } })
+      : await Task.findAll();
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -24,7 +28,7 @@ router.get("/tasks", async (_req, res) => {
 });
 
 // Get Task by ID
-router.get("/tasks/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
@@ -35,7 +39,7 @@ router.get("/tasks/:id", async (req, res) => {
 });
 
 // Update Task
-router.put("/tasks/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
@@ -47,9 +51,9 @@ router.put("/tasks/:id", async (req, res) => {
 });
 
 // Delete Task
-router.delete("/tasks/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const taask = await Task.findByPk(req.params.id);
+    const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
     await task.destroy();
     res.json({ messge: "Task deleted" });
